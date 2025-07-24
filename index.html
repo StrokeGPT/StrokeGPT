@@ -304,7 +304,6 @@
             </div>
         </div>
 
-
         <div class="setting-section" style="margin-top: auto;">
             <h3>DANGER ZONE</h3>
             <button id="edging-mode-btn" class="my-button sidebar-button edging" style="margin-bottom: 10px;">Edge Me</button>
@@ -481,6 +480,9 @@
                 const response = await fetch('/get_status');
                 const data = await response.json();
                 if (data.mood) { moodDisplay.textContent = `Mood: ${data.mood}`; }
+
+                console.log(data)
+
                 drawHandyVisualizer(data.speed || 0, data.depth || 0);
                 if (data.max_depth !== undefined && data.max_depth !== null) {
                     currentMaxHandyDepth = data.max_depth;
@@ -502,6 +504,36 @@
                     if (dVal) dVal.textContent = tempDepth;
                 }
             } catch (e) {}
+        }
+
+        function addHoldListener(id, direction) {
+            let intervalId = null;
+            let longPressTimer = null;
+            const initialInterval = 300;
+            const longPressInterval = 100;
+
+            document.getElementById(id).addEventListener('mousedown', () => {
+                // start repeating sendNudge when mouse is pressed
+                intervalId = setInterval(() => { sendNudge(direction); }, initialInterval);
+
+                longPressTimer = setTimeout(() => {
+                    clearInterval(intervalId);
+                    intervalId = setInterval(() => { sendNudge(direction); },
+                    longPressInterval);
+                }, 1000);
+            });
+
+            document.getElementById(id).addEventListener('mouseup', () => {
+                // stop repeating when mouse is released
+                clearInterval(intervalId);
+                clearTimeout(longPressTimer);
+            });
+
+            document.getElementById(id).addEventListener('mouseleave', () => {
+                // stop repeating when mouse leaves the element
+                clearInterval(intervalId);
+                clearTimeout(longPressTimer);
+            });
         }
 
         function renderSetup(isReturningUser = false, savedPersona = 'An energetic and passionate girlfriend') {
@@ -540,20 +572,22 @@
                     }
                 };
             } else if (setupStep === 3) {
+                let intervalId = null;
                 setupBox.innerHTML = `<h2>Step 3: Set the Tip</h2>` +
                     `<p>Move the Handy so the sleeve is at the very tip of your penis, then click 'Set Tip'.</p>` +
                     `<div><button id="d-down" class="my-button" style="width:auto;">&lt;&lt; Out</button> <span id="d-val" style="padding: 0 15px;">${tempDepth}</span>% <button id="d-up" class="my-button" style="width:auto;">In &gt;&gt;</button></div>` +
                     `<button id="set-min" class="my-button">Set Tip</button>`;
-                document.getElementById('d-up').onclick = () => { sendNudge('up'); };
-                document.getElementById('d-down').onclick = () => { sendNudge('down'); };
+
+                addHoldListener('d-up', 'up');
+                addHoldListener('d-down', 'down');
                 document.getElementById('set-min').onclick = () => { setupMinDepth = tempDepth; setupStep = 4; renderSetup(); };
             } else if (setupStep === 4) {
                 setupBox.innerHTML = `<h2>Step 4: Set the Base</h2>` +
                     `<p>Now move the Handy so the sleeve is at the base of your penis, then click 'Next'.</p>` +
                     `<div><button id="d-down" class="my-button" style="width:auto;">&lt;&lt; Out</button> <span id="d-val" style="padding: 0 15px;">${tempDepth}</span>% <button id="d-up" class="my-button" style="width:auto;">In &gt;&gt;</button></div>` +
                     `<button id="set-max" class="my-button">Next</button>`;
-                document.getElementById('d-up').onclick = () => { sendNudge('up'); };
-                document.getElementById('d-down').onclick = () => { sendNudge('down'); };
+                addHoldListener('d-up', 'up');
+                addHoldListener('d-down', 'down');
                 document.getElementById('set-max').onclick = () => {
                     setupMaxDepth = tempDepth;
                     fetch('/set_depth_limits', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({min_depth: setupMinDepth, max_depth: setupMaxDepth})});
