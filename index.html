@@ -480,9 +480,6 @@
                 const response = await fetch('/get_status');
                 const data = await response.json();
                 if (data.mood) { moodDisplay.textContent = `Mood: ${data.mood}`; }
-
-                console.log(data)
-
                 drawHandyVisualizer(data.speed || 0, data.depth || 0);
                 if (data.max_depth !== undefined && data.max_depth !== null) {
                     currentMaxHandyDepth = data.max_depth;
