@@ -1,0 +1,305 @@
+{
+  "Tip_Flutter_Low_Teasing_01": {
+    "name": "Tip_Flutter_Low_Teasing_01",
+    "description": "A gentle, fluttering pattern simulating light, teasing licks on the very tip.",
+    "tags": ["zone-tip", "rhythm-flutter", "intensity-low", "feeling-teasing"],
+    "native_range": 11,
+    "duration_ms": 4000,
+    "actions": [
+      {"at": 0, "pos": 14}, {"at": 160, "pos": 16}, {"at": 260, "pos": 11}, {"at": 420, "pos": 6},
+      {"at": 680, "pos": 8}, {"at": 780, "pos": 11}, {"at": 940, "pos": 16}, {"at": 1200, "pos": 17},
+      {"at": 1360, "pos": 11}, {"at": 1520, "pos": 17}, {"at": 1680, "pos": 11}, {"at": 1840, "pos": 17},
+      {"at": 2000, "pos": 11}, {"at": 2200, "pos": 15}, {"at": 2400, "pos": 8}, {"at": 2600, "pos": 17},
+      {"at": 2800, "pos": 6}, {"at": 3000, "pos": 16}, {"at": 3200, "pos": 10}, {"at": 3400, "pos": 17},
+      {"at": 3600, "pos": 8}, {"at": 3800, "pos": 14}, {"at": 4000, "pos": 12}
+    ]
+  },
+  "Tip_Suction_Low_Slow_01": {
+    "name": "Tip_Suction_Low_Slow_01",
+    "description": "A slow, gentle, pulsing suction that lingers lovingly on the tip.",
+    "tags": ["zone-tip", "rhythm-pulse", "intensity-low", "feeling-oral", "feeling-intimate"],
+    "native_range": 10,
+    "duration_ms": 8000,
+    "actions": [
+      {"at": 0, "pos": 15}, {"at": 1000, "pos": 5}, {"at": 2000, "pos": 15}, {"at": 3000, "pos": 5},
+      {"at": 4000, "pos": 15}, {"at": 5000, "pos": 5}, {"at": 6000, "pos": 15}, {"at": 7000, "pos": 5},
+      {"at": 8000, "pos": 15}
+    ]
+  },
+  "Tip_Swirl_Medium_Oral_01": {
+    "name": "Tip_Swirl_Medium_Oral_01",
+    "description": "A swirling tongue sensation that circles the head of the penis.",
+    "tags": ["zone-tip", "rhythm-swirl", "intensity-medium", "feeling-oral"],
+    "native_range": 15,
+    "duration_ms": 4000,
+    "actions": [
+        {"at": 0, "pos": 10}, {"at": 250, "pos": 20}, {"at": 500, "pos": 15}, {"at": 750, "pos": 5},
+        {"at": 1000, "pos": 10}, {"at": 1250, "pos": 20}, {"at": 1500, "pos": 15}, {"at": 1750, "pos": 5},
+        {"at": 2000, "pos": 10}, {"at": 2250, "pos": 20}, {"at": 2500, "pos": 15}, {"at": 2750, "pos": 5},
+        {"at": 3000, "pos": 10}, {"at": 3250, "pos": 20}, {"at": 3500, "pos": 15}, {"at": 3750, "pos": 5},
+        {"at": 4000, "pos": 10}
+    ]
+  },
+   "Tip_Staccato_High_Jackhammer_01": {
+    "name": "Tip_Staccato_High_Jackhammer_01",
+    "description": "An extremely fast, percussive, and vibrating pattern that focuses an intense 'jackhammer' sensation on a single spot.",
+    "tags": ["zone-tip", "rhythm-staccato", "intensity-high", "feeling-intense", "feeling-focused"],
+    "native_range": 3,
+    "duration_ms": 4000,
+    "actions": [
+        {"at": 0, "pos": 8}, {"at": 40, "pos": 5}, {"at": 80, "pos": 8}, {"at": 120, "pos": 5},
+        {"at": 160, "pos": 8}, {"at": 200, "pos": 5}, {"at": 240, "pos": 8}, {"at": 280, "pos": 5},
+        {"at": 320, "pos": 8}, {"at": 360, "pos": 5}, {"at": 400, "pos": 8}, {"at": 440, "pos": 5},
+        {"at": 480, "pos": 8}, {"at": 520, "pos": 5}, {"at": 560, "pos": 8}, {"at": 600, "pos": 5},
+        {"at": 1000, "pos": 8}, {"at": 1040, "pos": 5}, {"at": 1080, "pos": 8}, {"at": 1120, "pos": 5},
+        {"at": 1160, "pos": 8}, {"at": 1200, "pos": 5}, {"at": 1240, "pos": 8}, {"at": 1280, "pos": 5},
+        {"at": 1320, "pos": 8}, {"at": 1360, "pos": 5}, {"at": 1400, "pos": 8}, {"at": 1440, "pos": 5},
+        {"at": 1480, "pos": 8}, {"at": 1520, "pos": 5}, {"at": 1560, "pos": 8}, {"at": 1600, "pos": 5},
+        {"at": 4000, "pos": 8}
+    ]
+  },
+  "Mid_Wave_Low_Sensual_01": {
+    "name": "Mid_Wave_Low_Sensual_01",
+    "description": "A slow, sensual, and smooth wave-like motion along the mid-shaft.",
+    "tags": ["zone-mid", "rhythm-wave", "intensity-low", "feeling-sensual"],
+    "native_range": 40,
+    "duration_ms": 6000,
+    "actions": [
+      {"at": 0, "pos": 70}, {"at": 1500, "pos": 30}, {"at": 3000, "pos": 70},
+      {"at": 4500, "pos": 30}, {"at": 6000, "pos": 70}
+    ]
+  },
+  "Mid_Staccato_High_Intense_01": {
+    "name": "Mid_Staccato_High_Intense_01",
+    "description": "Short, sharp, and intense staccato hits against the mid-shaft.",
+    "tags": ["zone-mid", "rhythm-staccato", "intensity-high", "feeling-intense"],
+    "native_range": 30,
+    "duration_ms": 4000,
+    "actions": [
+      {"at": 0, "pos": 60}, {"at": 100, "pos": 30}, {"at": 500, "pos": 60}, {"at": 600, "pos": 30},
+      {"at": 1000, "pos": 60}, {"at": 1100, "pos": 30}, {"at": 1500, "pos": 60}, {"at": 1600, "pos": 30},
+      {"at": 2000, "pos": 60}, {"at": 2100, "pos": 30}, {"at": 2500, "pos": 60}, {"at": 2600, "pos": 30},
+      {"at": 3000, "pos": 60}, {"at": 3100, "pos": 30}, {"at": 3500, "pos": 60}, {"at": 3600, "pos": 30},
+      {"at": 4000, "pos": 60}
+    ]
+  },
+  "Base_Grind_Medium_Deep_01": {
+    "name": "Base_Grind_Medium_Deep_01",
+    "description": "A deep, weighty, grinding pressure concentrated at the base.",
+    "tags": ["zone-base", "rhythm-grind", "intensity-medium", "feeling-deep"],
+    "native_range": 15,
+    "duration_ms": 5000,
+    "actions": [
+      {"at": 0, "pos": 90}, {"at": 200, "pos": 85}, {"at": 400, "pos": 88}, {"at": 600, "pos": 90},
+      {"at": 800, "pos": 82}, {"at": 1000, "pos": 85}, {"at": 1200, "pos": 90}, {"at": 1400, "pos": 88},
+      {"at": 1600, "pos": 85}, {"at": 1800, "pos": 90}, {"at": 2000, "pos": 82}, {"at": 5000, "pos": 90}
+    ]
+  },
+  "Base_Gag_High_Rough_01": {
+    "name": "Base_Gag_High_Rough_01",
+    "description": "A rough, fast, and sharp pattern simulating an intense gagging sensation.",
+    "tags": ["zone-base", "rhythm-staccato", "intensity-high", "feeling-rough", "feeling-oral"],
+    "native_range": 25,
+    "duration_ms": 3000,
+    "actions": [
+        {"at": 0, "pos": 95}, {"at": 100, "pos": 70}, {"at": 200, "pos": 95}, {"at": 300, "pos": 70},
+        {"at": 400, "pos": 95}, {"at": 500, "pos": 70}, {"at": 700, "pos": 95}, {"at": 800, "pos": 70},
+        {"at": 1000, "pos": 95}, {"at": 1100, "pos": 70}, {"at": 1200, "pos": 95}, {"at": 1300, "pos": 70},
+        {"at": 1500, "pos": 95}, {"at": 1600, "pos": 70}, {"at": 1800, "pos": 95}, {"at": 1900, "pos": 70},
+        {"at": 2000, "pos": 95}, {"at": 2100, "pos": 70}, {"at": 2200, "pos": 95}, {"at": 2300, "pos": 70},
+        {"at": 3000, "pos": 95}
+    ]
+  },
+    "Base_Sequence_High_ChaosThroat_01": {
+    "name": "Base_Sequence_High_ChaosThroat_01",
+    "description": "An erratic, chaotic, and overwhelming deepthroating pattern that combines unpredictable speeds, rhythms, and depths.",
+    "tags": ["zone-base", "rhythm-sequence", "intensity-high", "feeling-rough", "feeling-unpredictable", "feeling-oral"],
+    "native_range": 85,
+    "duration_ms": 8000,
+    "actions": [
+      {"at": 0, "pos": 20}, {"at": 400, "pos": 95}, {"at": 550, "pos": 80}, {"at": 700, "pos": 95},
+      {"at": 850, "pos": 80}, {"at": 1000, "pos": 95}, {"at": 1500, "pos": 50}, {"at": 1600, "pos": 55},
+      {"at": 1700, "pos": 50}, {"at": 1800, "pos": 55}, {"at": 2200, "pos": 85}, {"at": 3000, "pos": 85},
+      {"at": 3200, "pos": 10}, {"at": 4000, "pos": 90}, {"at": 4100, "pos": 75}, {"at": 4200, "pos": 90},
+      {"at": 4300, "pos": 75}, {"at": 4800, "pos": 95}, {"at": 5500, "pos": 40}, {"at": 5800, "pos": 70},
+      {"at": 6500, "pos": 95}, {"at": 8000, "pos": 95}
+    ]
+  },
+  "Full_Piston_Medium_Steady_01": {
+    "name": "Full_Piston_Medium_Steady_01",
+    "description": "A standard, reliable, full-length piston stroke at a moderate, steady pace.",
+    "tags": ["zone-full", "rhythm-piston", "intensity-medium", "feeling-steady"],
+    "native_range": 80,
+    "duration_ms": 4000,
+    "actions": [
+      {"at": 0, "pos": 90}, {"at": 1000, "pos": 10}, {"at": 2000, "pos": 90},
+      {"at": 3000, "pos": 10}, {"at": 4000, "pos": 90}
+    ]
+  },
+  "Full_Piston_High_Relentless_01": {
+    "name": "Full_Piston_High_Relentless_01",
+    "description": "A fast, energetic, and relentless full-length piston stroke.",
+    "tags": ["zone-full", "rhythm-piston", "intensity-high", "feeling-relentless"],
+    "native_range": 80,
+    "duration_ms": 2000,
+    "actions": [
+      {"at": 0, "pos": 90}, {"at": 500, "pos": 10}, {"at": 1000, "pos": 90},
+      {"at": 1500, "pos": 10}, {"at": 2000, "pos": 90}
+    ]
+  },
+  "Full_Wave_Medium_Smooth_01": {
+    "name": "Full_Wave_Medium_Smooth_01",
+    "description": "A smooth, undulating wave that travels the full length.",
+    "tags": ["zone-full", "rhythm-wave", "intensity-medium", "feeling-smooth"],
+    "native_range": 80,
+    "duration_ms": 5000,
+    "actions": [
+      {"at": 0, "pos": 50}, {"at": 1250, "pos": 90}, {"at": 2500, "pos": 50},
+      {"at": 3750, "pos": 10}, {"at": 5000, "pos": 50}
+    ]
+  },
+    "Full_Wave_Low_Heartbeat_01": {
+    "name": "Full_Wave_Low_Heartbeat_01",
+    "description": "A slow, intimate, and organic wave that incorporates a gentle 'lub-dub' heartbeat pulse at the top and bottom of each stroke.",
+    "tags": ["zone-full", "rhythm-wave", "intensity-low", "feeling-intimate", "feeling-organic"],
+    "native_range": 80,
+    "duration_ms": 12000,
+    "actions": [
+      {"at": 0, "pos": 90}, {"at": 5000, "pos": 10}, {"at": 5150, "pos": 12}, {"at": 5300, "pos": 10},
+      {"at": 5600, "pos": 10}, {"at": 10600, "pos": 90}, {"at": 10750, "pos": 88}, {"at": 10900, "pos": 90},
+      {"at": 12000, "pos": 90}
+    ]
+  },
+  "Full_Bounce_High_Cowgirl_01": {
+    "name": "Full_Bounce_High_Cowgirl_01",
+    "description": "A fast, deep, and energetic bouncing motion simulating cowgirl riding.",
+    "tags": ["zone-full", "rhythm-bounce", "intensity-high", "feeling-energetic", "position-cowgirl"],
+    "native_range": 70,
+    "duration_ms": 3000,
+    "actions": [
+        {"at": 0, "pos": 80}, {"at": 200, "pos": 10}, {"at": 500, "pos": 80}, {"at": 700, "pos": 10},
+        {"at": 1000, "pos": 80}, {"at": 1200, "pos": 10}, {"at": 1500, "pos": 80}, {"at": 1700, "pos": 10},
+        {"at": 2000, "pos": 80}, {"at": 2200, "pos": 10}, {"at": 2500, "pos": 80}, {"at": 2700, "pos": 10},
+        {"at": 3000, "pos": 80}
+    ]
+  },
+  "Base_Grind_Medium_Cowgirl_01": {
+      "name": "Base_Grind_Medium_Cowgirl_01",
+      "description": "Tight, circling grinds focused deep at the base, simulating cowgirl hip movements.",
+      "tags": ["zone-base", "rhythm-grind", "intensity-medium", "feeling-intense", "position-cowgirl"],
+      "native_range": 10,
+      "duration_ms": 5000,
+      "actions": [
+        {"at": 0, "pos": 85}, {"at": 250, "pos": 90}, {"at": 500, "pos": 88}, {"at": 750, "pos": 80},
+        {"at": 1000, "pos": 85}, {"at": 1250, "pos": 90}, {"at": 1500, "pos": 88}, {"at": 1750, "pos": 80},
+        {"at": 2000, "pos": 85}, {"at": 2250, "pos": 90}, {"at": 2500, "pos": 88}, {"at": 2750, "pos": 80},
+        {"at": 5000, "pos": 85}
+      ]
+  },
+  "Full_Piston_High_Rough_Doggy_01": {
+      "name": "Full_Piston_High_Rough_Doggy_01",
+      "description": "A relentless, hard, and fast full-range piston stroke from a doggy-style position.",
+      "tags": ["zone-full", "rhythm-piston", "intensity-high", "feeling-rough", "position-doggy"],
+      "native_range": 75,
+      "duration_ms": 4000,
+      "actions": [
+          {"at": 0, "pos": 85}, {"at": 250, "pos": 10}, {"at": 500, "pos": 85}, {"at": 750, "pos": 10},
+          {"at": 1000, "pos": 85}, {"at": 1250, "pos": 10}, {"at": 1500, "pos": 85}, {"at": 1750, "pos": 10},
+          {"at": 2000, "pos": 85}, {"at": 2250, "pos": 10}, {"at": 2500, "pos": 85}, {"at": 2750, "pos": 10},
+          {"at": 3000, "pos": 85}, {"at": 3250, "pos": 10}, {"at": 3500, "pos": 85}, {"at": 3750, "pos": 10},
+          {"at": 4000, "pos": 85}
+      ]
+  },
+  "Full_Wave_Low_Intimate_Spooning_01": {
+      "name": "Full_Wave_Low_Intimate_Spooning_01",
+      "description": "A slow, deep, intimate rocking motion, perfect for spooning.",
+      "tags": ["zone-full", "rhythm-wave", "intensity-low", "feeling-intimate", "position-spooning"],
+      "native_range": 60,
+      "duration_ms": 8000,
+      "actions": [
+          {"at": 0, "pos": 80}, {"at": 2000, "pos": 20}, {"at": 4000, "pos": 80}, {"at": 6000, "pos": 20},
+          {"at": 8000, "pos": 80}
+      ]
+  },
+  "Anal_Probe_Low_Slow_01": {
+      "name": "Anal_Probe_Low_Slow_01",
+      "description": "A very slow, deliberate, and careful insertion, holding deep before slowly withdrawing.",
+      "tags": ["zone-full", "rhythm-sequence", "intensity-low", "feeling-anal", "feeling-intimate"],
+      "native_range": 80,
+      "duration_ms": 15000,
+      "actions": [
+          {"at": 0, "pos": 10}, {"at": 5000, "pos": 90}, {"at": 10000, "pos": 90}, {"at": 15000, "pos": 10}
+      ]
+  },
+  "Anal_Pulse_Medium_Deep_01": {
+      "name": "Anal_Pulse_Medium_Deep_01",
+      "description": "A deep, pulsing pressure pattern to simulate internal muscles clenching.",
+      "tags": ["zone-base", "rhythm-pulse", "intensity-medium", "feeling-anal", "feeling-intense"],
+      "native_range": 15,
+      "duration_ms": 6000,
+      "actions": [
+          {"at": 0, "pos": 85}, {"at": 500, "pos": 95}, {"at": 1000, "pos": 85}, {"at": 1500, "pos": 95},
+          {"at": 2000, "pos": 85}, {"at": 2500, "pos": 95}, {"at": 3000, "pos": 85}, {"at": 3500, "pos": 95},
+          {"at": 4000, "pos": 85}, {"at": 4500, "pos": 95}, {"at": 5000, "pos": 85}, {"at": 5500, "pos": 95},
+          {"at": 6000, "pos": 85}
+      ]
+  },
+  "Anal_Thrust_High_Rough_01": {
+      "name": "Anal_Thrust_High_Rough_01",
+      "description": "Hard, fast, deep, and rough thrusting for intense anal play.",
+      "tags": ["zone-base", "rhythm-piston", "intensity-high", "feeling-anal", "feeling-rough"],
+      "native_range": 40,
+      "duration_ms": 4000,
+      "actions": [
+          {"at": 0, "pos": 90}, {"at": 200, "pos": 50}, {"at": 400, "pos": 90}, {"at": 600, "pos": 50},
+          {"at": 800, "pos": 90}, {"at": 1000, "pos": 50}, {"at": 1200, "pos": 90}, {"at": 1400, "pos": 50},
+          {"at": 1600, "pos": 90}, {"at": 1800, "pos": 50}, {"at": 2000, "pos": 90}, {"at": 2200, "pos": 50},
+          {"at": 2400, "pos": 90}, {"at": 2600, "pos": 50}, {"at": 2800, "pos": 90}, {"at": 3000, "pos": 50},
+          {"at": 4000, "pos": 90}
+      ]
+  },
+  "Sequence_BuildAndRelease_High_01": {
+    "name": "Sequence_BuildAndRelease_High_01",
+    "description": "A long sequence that starts slow and shallow, builds to a frantic, full-range climax, then gently fades.",
+    "tags": ["zone-full", "rhythm-sequence", "intensity-high", "feeling-dynamic"],
+    "native_range": 90,
+    "duration_ms": 20000,
+    "actions": [
+      {"at": 0, "pos": 10}, {"at": 1000, "pos": 40}, {"at": 2000, "pos": 10}, {"at": 3000, "pos": 50},
+      {"at": 4000, "pos": 10}, {"at": 5000, "pos": 60}, {"at": 6000, "pos": 10}, {"at": 7000, "pos": 70},
+      {"at": 8000, "pos": 10}, {"at": 9000, "pos": 80}, {"at": 10000, "pos": 10}, {"at": 10750, "pos": 90},
+      {"at": 11500, "pos": 10}, {"at": 12250, "pos": 90}, {"at": 13000, "pos": 10}, {"at": 13500, "pos": 95},
+      {"at": 14000, "pos": 5}, {"at": 14500, "pos": 95}, {"at": 15000, "pos": 5}, {"at": 15500, "pos": 95},
+      {"at": 16000, "pos": 5}, {"at": 17000, "pos": 80}, {"at": 18000, "pos": 20}, {"at": 19000, "pos": 60},
+      {"at": 20000, "pos": 30}
+    ]
+  },
+  "Sequence_EdgeAndDeny_High_01": {
+    "name": "Sequence_EdgeAndDeny_High_01",
+    "description": "A teasing sequence that pushes towards a climax with intense tip work before abruptly pulling back to a deep, slow hold.",
+    "tags": ["zone-full", "rhythm-sequence", "intensity-high", "feeling-teasing"],
+    "native_range": 90,
+    "duration_ms": 15000,
+    "actions": [
+      {"at": 0, "pos": 40}, {"at": 1000, "pos": 60}, {"at": 2000, "pos": 30}, {"at": 3000, "pos": 70},
+      {"at": 4000, "pos": 20}, {"at": 5000, "pos": 80}, {"at": 6000, "pos": 10}, {"at": 7000, "pos": 15},
+      {"at": 7200, "pos": 5}, {"at": 7400, "pos": 15}, {"at": 7600, "pos": 5}, {"at": 7800, "pos": 15},
+      {"at": 8000, "pos": 5}, {"at": 8200, "pos": 15}, {"at": 8400, "pos": 5}, {"at": 8600, "pos": 15},
+      {"at": 8800, "pos": 5}, {"at": 9000, "pos": 15}, {"at": 9200, "pos": 5}, {"at": 9400, "pos": 15},
+      {"at": 9600, "pos": 5}, {"at": 10000, "pos": 95}, {"at": 15000, "pos": 95}
+    ]
+  },
+  "Sequence_Glitch_Medium_Teasing_01": {
+    "name": "Sequence_Glitch_Medium_Teasing_01",
+    "description": "An unpredictable and teasing sequence that 'glitches' and stutters, breaking rhythm unexpectedly. Ideal for edging.",
+    "tags": ["zone-full", "rhythm-sequence", "intensity-medium", "feeling-teasing", "feeling-unpredictable"],
+    "native_range": 80,
+    "duration_ms": 10000,
+    "actions": [
+      {"at": 0, "pos": 20}, {"at": 2000, "pos": 60}, {"at": 2100, "pos": 55}, {"at": 2200, "pos": 60},
+      {"at": 2300, "pos": 55}, {"at": 2400, "pos": 60}, {"at": 2600, "pos": 10}, {"at": 4000, "pos": 50},
+      {"at": 5000, "pos": 90}, {"at": 5100, "pos": 85}, {"at": 5200, "pos": 90}, {"at": 5300, "pos": 85},
+      {"at": 6000, "pos": 20}, {"at": 10000, "pos": 20}
+    ]
+  }
+}

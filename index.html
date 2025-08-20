@@ -1,507 +1,935 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Handy AI Chat</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StrokeGPT</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    :root {
+      --background-primary: #121212;
+      --background-secondary: #1E1E1E;
+      --background-tertiary: #2C2C2C;
+      --text-primary: #EAEAEA;
+      --text-secondary: #B3B3B3;
+      --accent-primary: #007AFF;
+      --accent-hover: #0056b3;
+      --user-bubble-bg: #267dff;
+      --bot-bubble-bg: #3E4042;
+      --border-color: #333333;
+      --shadow-color: rgba(0, 0, 0, 0.5);
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --warning-color: #ffc107;
+      --red: var(--danger-color); /* For visualizer */
+      --green: var(--success-color); /* For visualizer */
+    }
 
-        :root {
-            --background-darker: #21222C;
-            --background: #282a36;
-            --background-lighter: #343746;
-            --foreground: #f8f8f2;
-            --comment: #6272a4;
-            --cyan: #8be9fd;
-            --purple: #bd93f9;
-            --pink: #ff79c6;
-            --red: #ff5555;
-            --yellow: #f1fa8c;
-            --shadow: rgba(0, 0, 0, 0.2);
-        }
+    * {
+      box-sizing: border-box;
+      scrollbar-width: thin;
+      scrollbar-color: var(--background-tertiary) var(--background-primary);
+    }
+    
+    *::-webkit-scrollbar {
+      width: 8px;
+    }
 
-        * { box-sizing: border-box; }
+    *::-webkit-scrollbar-track {
+      background: var(--background-primary);
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--background-darker);
-            color: var(--foreground);
-            margin: 0;
-            height: 100vh;
-            overflow: hidden;
-            display: grid;
-            grid-template-columns: 1fr 320px;
-            transition: grid-template-columns 0.35s ease-in-out;
-        }
-        body.sidebar-collapsed { grid-template-columns: 1fr 0px; }
+    *::-webkit-scrollbar-thumb {
+      background-color: var(--background-tertiary);
+      border-radius: 10px;
+      border: 2px solid var(--background-primary);
+    }
 
-        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; transition: opacity 1s ease-out; opacity: 1; }
-        #splash-screen.hidden { opacity: 0; pointer-events: none; }
-        #splash-screen img { max-width: 90%; max-height: 70%; object-fit: contain; border-radius: 16px; }
-        #splash-screen p { margin-top: 20px; font-size: 2rem; color: #fff; text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
+    html, body {
+      height: 100%;
+    }
 
-        #main-area { flex-grow: 1; display: flex; flex-direction: column; height: 100%; background-color: var(--background); overflow: hidden; }
-        
-        #sidebar { padding: 20px; background-color: var(--background-darker); overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; gap: 20px; border-left: 1px solid var(--background-lighter); }
-       
-        #top-bar { padding: 10px 20px; background-color: var(--background); border-bottom: 1px solid var(--background-lighter); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; position: relative; }
-        #toggle-sidebar-btn { position: absolute; top: 50%; right: 20px; transform: translateY(-50%); background: var(--background-lighter); border: none; color: var(--foreground); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; transition: transform 0.3s ease-in-out, background-color 0.2s ease; font-size: 1.2em; display: flex; align-items: center; justify-content: center; }
-        #toggle-sidebar-btn:hover { background-color: var(--comment); }
-        body.sidebar-collapsed #toggle-sidebar-btn { transform: translateY(-50%) rotate(180deg); }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      background: var(--background-primary);
+      height: 100%;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      transition: grid-template-columns 0.35s ease-in-out;
+    }
 
-        #top-bar h1 { margin: 0; font-size: 1.5rem; color: var(--cyan); font-weight: 600; letter-spacing: 1px; text-shadow: 0 0 5px rgba(139, 233, 253, 0.4); }
-        #top-bar .top-bar-info { display: flex; align-items: center; gap: 15px; margin-right: 45px; }
-        #mood-display, #edging-timer { background-color: var(--background-lighter); padding: 6px 12px; border-radius: 8px; font-size: 0.9em; }
-        #edging-timer { color: var(--yellow); font-weight: 600; }
+    body.sidebar-collapsed {
+      grid-template-columns: 1fr 0;
+    }
 
-        #chat-view { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
-        #bottom-input-area { padding: 20px; border-top: 1px solid var(--background-lighter); background-color: var(--background); flex-shrink: 0; }
+    #main-area {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+    }
 
-        .chat-message-container { display: flex; align-items: flex-end; gap: 10px; margin-bottom: 15px; max-width: 85%; animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .chat-pfp { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-        .message-content { display: flex; flex-direction: column; }
-        .message-bubble { padding: 12px 16px; border-radius: 18px; line-height: 1.5; word-wrap: break-word; }
-        .message-bubble pre { font-family: 'Courier New', Courier, monospace; font-size: 0.9em; text-align: left; white-space: pre; }
-        
-        .bot-bubble { align-self: flex-start; }
-        .bot-bubble .message-bubble { background-color: var(--background-lighter); border-top-left-radius: 4px; }
-        .bot-bubble .speaker-name { align-self: flex-start; }
+    #sidebar {
+      padding: 20px;
+      background: var(--background-secondary);
+      height: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      border-left: 1px solid var(--border-color);
+      transition: all 0.35s ease-in-out;
+      overflow-x: hidden;
+    }
+    
+    body.sidebar-collapsed #sidebar {
+        padding: 20px 0;
+    }
 
-        .user-bubble { align-self: flex-end; }
-        .user-bubble .message-bubble { background-color: var(--comment); color: var(--foreground); border-top-right-radius: 4px; }
-        
-        .speaker-name { font-size: 0.8em; margin-bottom: 4px; color: var(--purple); font-weight: 600; }
-        .user-bubble .speaker-name { align-self: flex-end; }
-        
-        #visualizer-box { height: 40px; background-color: var(--background-darker); border-radius: 8px; margin-bottom: 15px; padding: 5px; }
-        .setting-section { border-radius: 12px; padding: 15px; background-color: var(--background); box-shadow: 0 4px 12px var(--shadow); }
-        .setting-section h3 { margin-top: 0; margin-bottom: 15px; font-size: 1.1rem; font-weight: 600; color: var(--cyan); border-bottom: 1px solid var(--background-lighter); padding-bottom: 10px; }
-        
-        .my-button { padding: 10px 16px; border: none; background-color: var(--comment); color: var(--foreground); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; font-size: 1em; font-weight: 600; width: 100%; box-shadow: 0 2px 4px var(--shadow); }
-        .my-button:hover { background-color: #798dcc; transform: translateY(-2px); box-shadow: 0 4px 8px var(--shadow); }
-        .my-button:active { transform: translateY(0); box-shadow: 0 2px 4px var(--shadow); }
-        .sidebar-button.edging { background-color: var(--yellow); color: var(--background); }
-        .sidebar-button.edging:hover { background-color: #f7ffae; }
-        .sidebar-button.milking { background-color: var(--pink); }
-        .sidebar-button.milking:hover { background-color: #ff92d0; }
-        .sidebar-button.stop { background-color: var(--red); }
-        .sidebar-button.stop:hover { background-color: #ff6e6e; }
+    #top-bar {
+      padding: 10px 20px;
+      background: var(--background-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--border-color);
+    }
 
-        .input-text, .select-box, input[type="number"] { padding: 10px; border: 1px solid var(--background-lighter); background-color: var(--background-lighter); color: var(--foreground); border-radius: 8px; font-size: 1em; width: 100%; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-        .input-text:focus, .select-box:focus, input[type="number"]:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(189, 147, 249, 0.3); }
+    #toggle-sidebar-btn {
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      background: var(--background-tertiary);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease-in-out;
+    }
 
-        #message-input-line { display: flex; gap: 10px; align-items: center; }
-        #message-input-line .my-button { width: auto; flex-shrink: 0; }
-        #message-input-line .input-text { flex-grow: 1; }
+    #toggle-sidebar-btn:hover {
+      background: var(--accent-primary);
+      color: white;
+    }
 
-        .audio-toggle-line { display: flex; align-items: center; gap: 8px; padding-top: 10px; }
+    body.sidebar-collapsed #toggle-sidebar-btn {
+      transform: translateY(-50%) rotate(180deg);
+    }
 
-        #status-text { margin-top: 15px; font-size: 0.9em; text-align: center; color: var(--purple); }
-        #setup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 9999; color: var(--foreground); }
-        #setup-box { text-align: center; background-color: var(--background); padding: 30px; border-radius: 12px; border: 1px solid var(--background-lighter); box-shadow: 0 8px 32px var(--shadow); }
-        #setup-box h2 { color: var(--cyan); margin-top: 0; }
-        #setup-box button { margin-top: 15px; }
-        .slider-container { margin: 15px 0; }
-        
-        .timing-row { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
-        .timing-row label { flex-basis: 50px; font-size: 0.9em; }
-        .timing-row input { flex-grow: 1; width: 40px; }
-        .timing-row span { padding: 0 5px; }
+    #top-bar h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 1px;
+    }
 
-        .typing-dots span { display: inline-block; animation: blink 1.4s infinite both; font-size: 1.5em; line-height: 0; }
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes blink { 0% { opacity: 0.2; } 20% { opacity: 1; } 100% { opacity: 0.2; } }
+    #top-bar .top-bar-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-right: 50px;
+    }
 
-        #easter-egg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #0f0; font-family: 'Courier New', monospace; font-size: 1.5em; display: none; align-items: center; justify-content: center; z-index: 10001; opacity: 0; transition: opacity 1s ease-in-out; text-align: center; }
+    #mood-display, #edging-timer {
+      background: var(--background-tertiary);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.9em;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+    }
 
-    </style>
+    #edging-timer {
+      color: var(--warning-color);
+      font-weight: 600;
+    }
+
+    #chat-view {
+      flex: 1;
+      min-height: 0;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    #bottom-input-area {
+      padding: 20px;
+      border-top: 1px solid var(--border-color);
+      background: var(--background-primary);
+      flex-shrink: 0;
+    }
+
+    .chat-message-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      max-width: 85%;
+    }
+    
+    .bot-bubble {
+        align-self: flex-start;
+    }
+    
+    .user-bubble {
+        align-self: flex-end;
+    }
+    
+    .user-bubble .message-content {
+        align-items: flex-end;
+    }
+
+    .chat-pfp {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 2px solid var(--border-color);
+    }
+
+    .message-content {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .message-bubble {
+      padding: 12px 18px;
+      border-radius: 20px;
+      line-height: 1.6;
+      word-wrap: break-word;
+      font-size: 1rem;
+    }
+
+    .bot-bubble .message-bubble {
+      background: var(--bot-bubble-bg);
+      border-top-left-radius: 5px;
+      color: var(--text-primary);
+    }
+
+    .user-bubble .message-bubble {
+      background: var(--user-bubble-bg);
+      color: white;
+      border-top-right-radius: 5px;
+    }
+
+    .speaker-name {
+      font-size: 0.85em;
+      color: var(--text-secondary);
+      font-weight: 600;
+      padding: 0 10px;
+    }
+    
+    .input-text, .select-box, input[type="number"], textarea, .my-button {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--background-tertiary);
+      color: var(--text-primary);
+      outline: none;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .input-text:focus, .select-box:focus, input[type="number"]:focus, textarea:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+    }
+
+    #message-input-line {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .my-button {
+        background-color: var(--accent-primary);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    
+    .my-button:hover:not(:disabled) {
+        background-color: var(--accent-hover);
+    }
+    
+    .my-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    #message-input-line .my-button {
+      width: auto;
+      flex-shrink: 0;
+    }
+
+    #message-input-line .input-text {
+      flex-grow: 1;
+    }
+
+    .radio-group {
+      display: flex;
+      justify-content: space-around;
+      background: var(--background-tertiary);
+      border-radius: 10px;
+      padding: 5px;
+      border: 1px solid var(--border-color);
+    }
+
+    .radio-group input {
+      display: none;
+    }
+
+    .radio-group label {
+      flex: 1;
+      text-align: center;
+      padding: 8px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .radio-group input:checked + label {
+      background: var(--accent-primary);
+      color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    #status-text {
+      margin-top: 15px;
+      font-size: 0.9em;
+      text-align: center;
+      color: var(--text-secondary);
+      min-height: 1.2em;
+    }
+    
+    .setting-section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .setting-section h3 {
+        margin: 0 0 5px 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 8px;
+    }
+
+    .timing-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .timing-row label {
+      flex-basis: 50px;
+      font-size: 0.9em;
+      color: var(--text-secondary);
+    }
+    
+    .timing-row input {
+        text-align: center;
+    }
+
+    .typing-dots span {
+      display: inline-block;
+      animation: blink 1.4s infinite both;
+      font-size: 1.5em;
+      line-height: 1;
+    }
+
+    .typing-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .typing-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    @keyframes blink {
+      0% {
+        opacity: 0.2;
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0.2;
+      }
+    }
+    
+    .sidebar-button.stop { background-color: var(--danger-color); }
+    .sidebar-button.stop:hover { background-color: #a72835; }
+    .sidebar-button.edging { background-color: var(--warning-color); color: #121212; }
+    .sidebar-button.edging:hover { background-color: #dba90e; }
+    .sidebar-button.milking { background-color: #9c27b0; }
+    .sidebar-button.milking:hover { background-color: #7b1fa2; }
+    
+    .audio-toggle-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    /* Onboarding Modal Styles */
+    #onboarding-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    #onboarding-modal {
+        background-color: var(--background-secondary);
+        padding: 30px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 500px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 10px 30px var(--shadow-color);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    #onboarding-modal h2 {
+        margin: 0 0 5px 0;
+        text-align: center;
+        color: var(--text-primary);
+    }
+    
+    #onboarding-modal p {
+        margin: 0 0 15px 0;
+        text-align: center;
+        color: var(--text-secondary);
+    }
+
+    #onboarding-modal label {
+        font-weight: 600;
+        margin-bottom: -5px;
+        color: var(--text-secondary);
+    }
+    
+    .onboarding-note {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        opacity: 0.8;
+        margin: -10px 0 0 5px;
+    }
+
+    .onboarding-sliders {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 10px;
+    }
+    
+    .slider-group input[type="range"] {
+        width: 100%;
+    }
+
+  </style>
 </head>
 <body>
-    <div id="splash-screen">
-        <img src="/static/splash.jpg" alt="StrokeGPT">
-        <p>Press Enter to Begin</p>
+  <div id="main-area">
+    <div id="top-bar">
+      <h1>StrokeGPT</h1>
+      <div class="top-bar-info">
+        <div id="mood-display">Mood: Curious 🤔</div>
+        <div id="edging-timer" style="display:none;">Edging: 0m 00s</div>
+      </div>
+      <button id="toggle-sidebar-btn">⟨</button>
     </div>
-    <div id="main-area">
-        <div id="top-bar">
-            <h1>StrokeGPT</h1>
-            <div class="top-bar-info">
-                <div id="edging-timer" style="display: none;">00:00</div>
-                <div id="mood-display">Mood: ...</div>
-            </div>
-            <button id="toggle-sidebar-btn">&laquo;</button>
+
+    <div id="chat-view">
+      <div id="chat-messages-container" style="flex:0 0 auto; display: flex; flex-direction: column; gap: 15px;"></div>
+      <div id="typing-indicator" class="chat-message-container bot-bubble" style="display:none;">
+        <img id="typing-indicator-pfp" class="chat-pfp" src="/static/default-pfp.png" alt="AI PFP">
+        <div class="message-content">
+          <div class="speaker-name">BOT</div>
+          <div class="message-bubble"><div class="typing-dots"><span>.</span><span>.</span><span>.</span></div></div>
         </div>
-        <div id="chat-view">
-            <div id="chat-messages-container">
-                <div id="typing-indicator" class="chat-message-container bot-bubble" style="display: none;">
-                    <img class="chat-pfp" id="typing-indicator-pfp" src="/static/default-pfp.png" alt="pfp">
-                    <div class="message-content">
-                        <p class="speaker-name">BOT</p>
-                        <p class="message-bubble typing-dots"><span>.</span><span>.</span><span>.</span></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="bottom-input-area">
-            <div id="visualizer-box"><canvas id="rhythm-canvas"></canvas></div>
-            <div id="message-input-line">
-                <input type="text" id="user-chat-input" class="input-text" placeholder="Type a message or command...">
-                <button id="send-chat-btn" class="my-button">Send</button>
-            </div>
-             <div id="status-text">Status: Checking for saved settings...</div>
-        </div>
+      </div>
     </div>
-    <div id="sidebar">
-        <div class="setting-section">
-            <h3>Persona</h3>
-            <label for="pfp-upload" style="cursor: pointer; display: block; margin-bottom: 15px;">
-                <img id="ai-pfp-preview" src="/static/default-pfp.png" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin: 10px auto; display: block; border: 2px solid var(--comment);">
-            </label>
-            <input type="file" id="pfp-upload" accept="image/*" style="display: none;">
-            <input type="text" id="ai-name-input" class="input-text" placeholder="AI's Name..." style="margin-bottom: 10px;">
-            <button id="set-ai-name-btn" class="my-button" style="margin-bottom: 15px;">Set Name</button>
-            <input type="text" id="persona-input" class="input-text" placeholder="Describe the AI's persona...">
-            <button id="set-persona-btn" class="my-button" style="margin-top: 10px;">Set Persona</button>
-        </div>
-        <div class="setting-section">
-            <h3>Mode Timings (Seconds)</h3>
-            <div class="timing-row"><label for="auto-min-time">Auto:</label><input type="number" id="auto-min-time" min="1" max="60" step="1" value="4"><span>-</span><input type="number" id="auto-max-time" min="1" max="60" step="1" value="7"></div>
-            <div class="timing-row"><label for="edging-min-time">Edging:</label><input type="number" id="edging-min-time" min="1" max="60" step="1" value="5"><span>-</span><input type="number" id="edging-max-time" min="1" max="60" step="1" value="8"></div>
-            <div class="timing-row"><label for="milking-min-time">Milking:</label><input type="number" id="milking-min-time" min="1" max="60" step="1" value="2"><span>-</span><input type="number" id="milking-max-time" min="1" max="60" step="1" value="5"></div>
-            <button id="save-timings-btn" class="my-button">Save Timings</button>
-        </div>
-        <div class="setting-section">
-            <h3>Voice Output (ElevenLabs)</h3>
-            <input type="password" id="elevenlabs-key-input" class="input-text" placeholder="ElevenLabs API Key">
-            <button id="set-elevenlabs-key-button" class="my-button">Set Key</button>
-            <select id="elevenlabs-voice-select-box" class="select-box" disabled><option>Set API Key to load voices...</option></select>
-            <div class="audio-toggle-line"><input type="checkbox" id="enable-audio-checkbox"><label for="enable-audio-checkbox">Enable Audio</label></div>
-        </div>
-        <div class="setting-section">
-            <h3>Control Actions</h3>
-            <div style="display: flex; gap: 10px; margin-bottom: 10px;"><button id="start-auto-btn" class="my-button" style="flex: 1;">Start Auto</button><button id="stop-auto-btn" class="my-button" style="flex: 1;">Stop Auto</button></div>
-            <div style="display: flex; gap: 10px;"><button id="like-this-move-btn" class="my-button" style="flex: 1;">👍 Like</button><button id="toggle-memory-btn" class="my-button" style="flex: 1;">Memories: ON</button></div>
-            <button id="im-close-btn" class="my-button sidebar-button milking" style="display: none; margin-top: 10px;">I'm Close!</button>
-        </div>
-        <div class="setting-section" style="margin-top: auto;">
-            <h3>DANGER ZONE</h3>
-            <button id="edging-mode-btn" class="my-button sidebar-button edging" style="margin-bottom: 10px;">Edge Me</button>
-            <button id="milking-mode-btn" class="my-button sidebar-button milking" style="margin-bottom: 10px;">Milk Me</button>
-            <button id="emergency-stop-all-btn" class="my-button sidebar-button stop">STOP EVERYTHING</button>
-        </div>
+
+    <div id="bottom-input-area">
+      <div id="rhythm-visualizer" style="height:80px;background:var(--background-secondary);border:1px solid var(--border-color);border-radius:10px;margin-bottom:15px; overflow: hidden;">
+        <canvas id="rhythm-canvas" style="width:100%;height:100%;"></canvas>
+      </div>
+      <div id="message-input-line">
+        <input id="user-chat-input" class="input-text" placeholder="Type here..."/>
+        <button id="send-chat-btn" class="my-button">Send</button>
+      </div>
+      <div id="status-text">Status: Checking for saved settings...</div>
     </div>
-    <div id="setup-overlay"><div id="setup-box"></div></div>
-    <div id="easter-egg-overlay"></div>
-    <script>
-        const D = document;
-        const userChatInput = D.getElementById('user-chat-input');
-        const personaInput = D.getElementById('persona-input');
-        const setPersonaBtn = D.getElementById('set-persona-btn');
-        const aiNameInput = D.getElementById('ai-name-input');
-        const setAiNameBtn = D.getElementById('set-ai-name-btn');
-        const elevenLabsKeyInput = D.getElementById('elevenlabs-key-input');
-        const setElevenLabsKeyButton = D.getElementById('set-elevenlabs-key-button');
-        const setupOverlay = D.getElementById('setup-overlay');
-        const setupBox = D.getElementById('setup-box');
-        const statusText = D.getElementById('status-text');
-        const moodDisplay = D.getElementById('mood-display');
-        const rhythmCanvas = D.getElementById('rhythm-canvas');
-        const typingIndicator = D.getElementById('typing-indicator');
-        const chatView = D.getElementById('chat-view');
-        const chatMessagesContainer = D.getElementById('chat-messages-container');
-        const pfpUploadInput = D.getElementById('pfp-upload');
-        const pfpPreview = D.getElementById('ai-pfp-preview');
-        const typingIndicatorPfp = D.getElementById('typing-indicator-pfp');
-        const toggleSidebarBtn = D.getElementById('toggle-sidebar-btn');
-        const imCloseBtn = D.getElementById('im-close-btn');
-        const edgingModeBtn = D.getElementById('edging-mode-btn');
-        const edgingTimer = D.getElementById('edging-timer');
-        const easterEggOverlay = D.getElementById('easter-egg-overlay');
-        const ctx = rhythmCanvas.getContext('2d');
-        let myHandyKey = '', myPersonaDescription = '', aiName = 'BOT', edgingTimerInterval = null;
+  </div>
+
+  <div id="sidebar">
+    <div class="setting-section">
+      <h3>Persona</h3>
+      <label for="pfp-upload" style="cursor:pointer;display:block;margin-bottom:10px;">
+        <img id="ai-pfp-preview" src="/static/default-pfp.png" style="width:100px;height:100px;border-radius:50%;object-fit:cover;margin:10px auto;display:block;border:3px solid var(--border-color);" />
+      </label>
+      <input type="file" id="pfp-upload" accept="image/*" style="display:none"/>
+      <input type="text" id="ai-name-input" class="input-text" placeholder="AI's Name..." />
+      <button id="set-ai-name-btn" class="my-button">Set Name</button>
+      <textarea id="persona-input" class="input-text" placeholder="Describe the AI's persona..." rows="3"></textarea>
+      <button id="set-persona-btn" class="my-button">Set Persona</button>
+      <div class="setting-subsection" style="margin-top:10px;">
+        <label>Reply Length</label>
+        <div class="radio-group">
+          <input type="radio" id="len-short" name="reply-length" value="short"><label for="len-short">Short</label>
+          <input type="radio" id="len-medium" name="reply-length" value="medium" checked><label for="len-medium">Medium</label>
+          <input type="radio" id="len-long" name="reply-length" value="long"><label for="len-long">Long</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="setting-section">
+      <h3>Mode Timings (Seconds)</h3>
+      <div class="timing-row"><label>Auto</label><input type="number" class="input-text" id="auto-min-time" min="0.5" max="60" step="0.5" value="4"><span>-</span><input type="number" class="input-text" id="auto-max-time" min="1" max="60" step="1" value="7"></div>
+      <div class="timing-row"><label>Edge</label><input type="number" class="input-text" id="edging-min-time" min="0.5" max="60" step="0.5" value="5"><span>-</span><input type="number" class="input-text" id="edging-max-time" min="1" max="60" step="1" value="8"></div>
+      <div class="timing-row"><label>Milk</label><input type="number" class="input-text" id="milking-min-time" min="0.3" max="60" step="0.1" value="2.5"><span>-</span><input type="number" class="input-text" id="milking-max-time" min="0.5" max="60" step="0.5" value="4.5"></div>
+    </div>
+
+    <div class="setting-section">
+      <h3>Audio</h3>
+      <input id="elevenlabs-key-input" class="input-text" placeholder="ElevenLabs API key">
+      <button id="set-elevenlabs-key-button" class="my-button">Save API Key</button>
+      <select id="elevenlabs-voice-select-box" class="select-box" disabled><option>Set API Key to load voices...</option></select>
+      <div class="audio-toggle-line"><input type="checkbox" id="enable-audio-checkbox"><label for="enable-audio-checkbox">Enable Audio</label></div>
+    </div>
+
+    <div class="setting-section">
+      <h3>Control Actions</h3>
+      <div style="display:flex;gap:10px;">
+        <button id="start-auto-btn" class="my-button" style="flex:1;">Start Auto</button>
+        <button id="stop-auto-btn" class="my-button" style="flex:1;">Stop Auto</button>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button id="like-this-move-btn" class="my-button" style="flex:1;">Like This Move</button>
+        <button id="memories-toggle-btn" class="my-button" style="flex:1;">Memories: ON</button>
+      </div>
+      <button id="im-close-btn" class="my-button sidebar-button milking" style="display:none;">I'm Close!</button>
+    </div>
+
+    <div class="setting-section" style="margin-top:auto;">
+      <h3>DANGER ZONE</h3>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button id="edging-mode-btn" class="my-button sidebar-button edging">Edge Me</button>
+        <button id="milking-mode-btn" class="my-button sidebar-button milking">Milk Me</button>
+        <button id="emergency-stop-all-btn" class="my-button sidebar-button stop">STOP EVERYTHING</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="onboarding-overlay" style="display: none;">
+    <div id="onboarding-modal">
+        <h2>Welcome to StrokeGPT</h2>
+        <p>Please configure your device and AI persona to get started.</p>
         
-        async function apiCall(endpoint, options = {}) {
-            try {
-                const response = await fetch(endpoint, options);
-                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-                const contentType = response.headers.get("content-type");
-                if (contentType && contentType.includes("audio/mpeg")) { return response.blob(); }
-                return response.json();
-            } catch (error) {
-                console.error(`API call to ${endpoint} failed:`, error);
-                statusText.textContent = `Error: Cannot connect to server.`;
-            }
-        }
+        <label for="onboarding-key">Handy Connection Key</label>
+        <input type="text" id="onboarding-key" class="input-text" placeholder="Enter your connection key...">
         
-        function addChatMessage(sender, text) {
-            const pfpSrc = sender === 'BOT' ? pfpPreview.src : '';
-            const pfpHtml = sender === 'BOT' ? `<img class="chat-pfp" src="${pfpSrc}" alt="pfp">` : '';
-            const speaker = sender === 'BOT' ? aiName : 'YOU';
-            const el = document.createElement('div');
-            el.className = `chat-message-container ${sender === 'BOT' ? 'bot-bubble' : 'user-bubble'}`;
-            el.innerHTML = `
-                ${pfpHtml}
-                <div class="message-content">
-                    <p class="speaker-name">${speaker}</p>
-                    <p class="message-bubble">${text}</p>
-                </div>`;
-            chatMessagesContainer.insertBefore(el, typingIndicator);
+        <label for="onboarding-persona">AI Persona</label>
+        <textarea id="onboarding-persona" class="input-text" rows="3" placeholder="e.g., a horny catgirl or a sentient but surprisingly spritely block of cheese."></textarea>
+        
+        <div class="onboarding-sliders">
+            <div class="slider-group">
+                <label>Speed Range: <span id="onboarding-speed-val">0 - 100</span>%</label>
+                <p class="onboarding-note">Note: 15% is often plenty fast enough for a max speed.</p>
+                <input type="range" id="onboarding-min-speed" min="0" max="100" value="0">
+                <input type="range" id="onboarding-max-speed" min="0" max="100" value="100">
+            </div>
+            <div class="slider-group">
+                <label>Depth Range: <span id="onboarding-depth-val">0 - 100</span>%</label>
+                <p class="onboarding-note">The top slider is the base of your dick and the bottom one is your tip. The handy goes from 1 (base) to 100 (tip), so guestimate where your tip is. You can always change it later.</p>
+                <input type="range" id="onboarding-min-depth" min="0" max="100" value="0">
+                <input type="range" id="onboarding-max-depth" min="0" max="100" value="100">
+            </div>
+        </div>
+        
+        <button id="onboarding-save-btn" class="my-button" style="margin-top: 15px;">Save & Start</button>
+    </div>
+  </div>
+
+  <script>
+    const D = document;
+
+    // Elements
+    const userChatInput = D.getElementById('user-chat-input');
+    const personaInput = D.getElementById('persona-input');
+    const aiNameInput = D.getElementById('ai-name-input');
+    const elevenLabsKeyInput = D.getElementById('elevenlabs-key-input');
+    const setElevenLabsKeyButton = D.getElementById('set-elevenlabs-key-button');
+    const statusText = D.getElementById('status-text');
+    const moodDisplay = D.getElementById('mood-display');
+    const rhythmCanvas = D.getElementById('rhythm-canvas');
+    const typingIndicator = D.getElementById('typing-indicator');
+    const chatView = D.getElementById('chat-view');
+    const chatMessagesContainer = D.getElementById('chat-messages-container');
+    const pfpUploadInput = D.getElementById('pfp-upload');
+    const pfpPreview = D.getElementById('ai-pfp-preview');
+    const typingIndicatorPfp = D.getElementById('typing-indicator-pfp');
+    const toggleSidebarBtn = D.getElementById('toggle-sidebar-btn');
+    const imCloseBtn = D.getElementById('im-close-btn');
+    const onboardingOverlay = D.getElementById('onboarding-overlay');
+
+    let myHandyKey = "";
+    let myPersonaDescription = "";
+    let replyLength = "medium";
+    let ctx = rhythmCanvas.getContext('2d');
+
+    function applySidebarState(){
+      const collapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+      document.body.classList.toggle('sidebar-collapsed', collapsed);
+    }
+    toggleSidebarBtn.addEventListener('click', ()=>{
+      document.body.classList.toggle('sidebar-collapsed');
+      localStorage.setItem('sidebar_collapsed', document.body.classList.contains('sidebar-collapsed'));
+    });
+    applySidebarState();
+
+    function escapeHTML(s){ return s.replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+    function scrollToBottom(){
+        setTimeout(() => {
             chatView.scrollTop = chatView.scrollHeight;
-        }
+        }, 50);
+    }
 
-        async function sendUserMessage(message) {
-            const persona = personaInput.value.trim();
-            if (message.trim() || persona !== myPersonaDescription) {
-                if(message.trim()) addChatMessage('YOU', message);
-                myPersonaDescription = persona;
-                userChatInput.value = '';
-                D.querySelector('#typing-indicator .speaker-name').textContent = aiName;
-                typingIndicator.style.display = 'flex';
-                chatView.scrollTop = chatView.scrollHeight;
-                await apiCall('/send_message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: message, key: myHandyKey, persona_desc: myPersonaDescription }) });
+    function updateModeButtons(active){
+      const autoBtn = D.getElementById('start-auto-btn');
+      const edgeBtn = D.getElementById('edging-mode-btn');
+      const milkBtn = D.getElementById('milking-mode-btn');
+      const stopAutoBtn = D.getElementById('stop-auto-btn');
+      const emergencyBtn = D.getElementById('emergency-stop-all-btn');
+      const running = !!active;
+      [autoBtn,edgeBtn,milkBtn].forEach(b=>{ if(b) b.disabled = running; });
+      if (stopAutoBtn) stopAutoBtn.disabled = !running;
+      if (emergencyBtn) emergencyBtn.disabled = false;
+      if (imCloseBtn) imCloseBtn.style.display = active === 'edging' ? 'block' : 'none';
+    }
+
+    async function apiCall(path, opts={}){
+      try{
+        const res = await fetch(path, opts);
+        if (res.headers.get('content-type')?.includes('audio/')) return await res.arrayBuffer();
+        return await res.json();
+      }catch(e){
+        if (statusText) statusText.textContent = `Error: ${e.message}`;
+        return null;
+      }
+    }
+
+    function addUserMessageToChat(text){
+      if (!text) return;
+      const div = D.createElement('div');
+      div.className = 'chat-message-container user-bubble';
+      div.innerHTML = `<div class="message-content"><div class="message-bubble">${escapeHTML(text)}</div></div>`;
+      chatMessagesContainer.appendChild(div);
+      scrollToBottom();
+    }
+
+    async function sendUserMessage(message){
+      const text = (message||"").trim();
+      
+      const currentPersona = personaInput.value.trim();
+      if (currentPersona !== myPersonaDescription) {
+          myPersonaDescription = currentPersona;
+      }
+
+      if (!text && !myPersonaDescription) return;
+      
+      if (text) {
+          addUserMessageToChat(text);
+      }
+      userChatInput.value = "";
+      typingIndicator.style.display = 'flex';
+      scrollToBottom();
+
+      const payload = { message: text, key: myHandyKey, persona_desc: myPersonaDescription, reply_length: replyLength };
+      await apiCall('/send_message', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    }
+
+    function resizeCanvas(){
+      if (!rhythmCanvas.parentElement) return;
+      rhythmCanvas.width = rhythmCanvas.parentElement.clientWidth;
+      rhythmCanvas.height = rhythmCanvas.parentElement.clientHeight;
+    }
+
+    function drawHandyVisualizer(speed, depth){
+      const width = rhythmCanvas.width, height = rhythmCanvas.height;
+      if (!width || !height) return;
+      
+      const barHeight = (height/2) - 4;
+      const ctx2 = ctx;
+      const style = getComputedStyle(document.body);
+
+      ctx2.clearRect(0, 0, width, height);
+      
+      ctx2.fillStyle = 'rgba(220, 53, 69, 0.2)'; 
+      ctx2.fillRect(0, 0, width, barHeight);
+      ctx2.fillStyle = style.getPropertyValue('--danger-color').trim();
+      ctx2.fillRect(0, 0, (speed/100) * width, barHeight);
+      
+      ctx2.fillStyle = 'rgba(40, 167, 69, 0.2)';
+      ctx2.fillRect(0, barHeight + 8, width, barHeight);
+      ctx2.fillStyle = style.getPropertyValue('--success-color').trim();
+      ctx2.fillRect(0, barHeight + 8, (100 - depth) / 100 * width, barHeight);
+      
+      ctx2.fillStyle = 'rgba(255, 255, 255, 0.9)';
+      ctx2.font = "600 12px Inter";
+      ctx2.textAlign = 'left';
+      ctx2.fillText(`Speed: ${speed}%`, 10, barHeight / 2 + 5);
+      ctx2.fillText(`Depth: ${depth}%`, 10, barHeight + 8 + (barHeight / 2) + 5);
+    }
+
+    async function startupCheck(){
+      const data = await apiCall('/check_settings');
+      if (data && data.configured){
+        onboardingOverlay.style.display = 'none';
+        myPersonaDescription = data.persona || "";
+        personaInput.value = myPersonaDescription;
+        myHandyKey = data.handy_key || "";
+        if (data.ai_name) {
+          aiNameInput.value = data.ai_name;
+          document.querySelectorAll('.speaker-name').forEach(el=>{
+            if (el.textContent === 'BOT') el.textContent = data.ai_name;
+          });
+        }
+        if (data.pfp) { pfpPreview.src = data.pfp; typingIndicatorPfp.src = data.pfp; }
+        if (data.timings){
+          D.getElementById('auto-min-time').value = data.timings.auto_min;
+          D.getElementById('auto-max-time').value = data.timings.auto_max;
+          D.getElementById('edging-min-time').value = data.timings.edging_min;
+          D.getElementById('edging-max-time').value = data.timings.edging_max;
+          D.getElementById('milking-min-time').value = data.timings.milking_min;
+          D.getElementById('milking-max-time').value = data.timings.milking_max;
+        }
+        if (data.elevenlabs_key){
+          elevenLabsKeyInput.value = data.elevenlabs_key;
+          setElevenLabsKeyButton.click();
+        }
+        if (data.reply_length){
+          const r = D.querySelector(`input[name="reply-length"][value="${data.reply_length}"]`);
+          if (r) r.checked = true;
+          replyLength = data.reply_length;
+        }
+        statusText.textContent = "Ready.";
+      } else {
+        onboardingOverlay.style.display = 'flex';
+      }
+    }
+
+    // --- Onboarding Logic ---
+    function setupOnboarding(){
+        const minSpeed = D.getElementById('onboarding-min-speed');
+        const maxSpeed = D.getElementById('onboarding-max-speed');
+        const speedVal = D.getElementById('onboarding-speed-val');
+        const minDepth = D.getElementById('onboarding-min-depth');
+        const maxDepth = D.getElementById('onboarding-max-depth');
+        const depthVal = D.getElementById('onboarding-depth-val');
+        const saveBtn = D.getElementById('onboarding-save-btn');
+
+        function updateSliderLabels() {
+            if (parseInt(minSpeed.value) > parseInt(maxSpeed.value)) {
+                maxSpeed.value = minSpeed.value;
             }
-        }
+            speedVal.textContent = `${minSpeed.value} - ${maxSpeed.value}`;
 
-        function resizeCanvas() {
-            if (!rhythmCanvas.parentElement) return;
-            rhythmCanvas.width = rhythmCanvas.parentElement.clientWidth;
-            rhythmCanvas.height = rhythmCanvas.parentElement.clientHeight;
-        }
-
-        function drawHandyVisualizer(speed, depth) {
-            const width = rhythmCanvas.width, height = rhythmCanvas.height;
-            if (width === 0 || height === 0) return;
-            const barHeight = (height / 2) - 4;
-            ctx.clearRect(0, 0, width, height);
-            ctx.font = "12px sans-serif";
-            ctx.fillStyle = 'rgba(255, 85, 85, 0.3)';
-            ctx.fillRect(0, 0, width, barHeight);
-            ctx.fillStyle = 'var(--red)';
-            ctx.fillRect(0, 0, (speed / 100) * width, barHeight);
-            ctx.fillStyle = 'white';
-            ctx.fillText(`Speed: ${speed}%`, 5, barHeight / 2 + 5);
-            ctx.fillStyle = 'rgba(255, 184, 108, 0.3)';
-            ctx.fillRect(0, height / 2 + 4, width, barHeight);
-            ctx.fillStyle = '#ffb86c';
-            ctx.fillRect(0, height / 2 + 4, (depth / 100) * width, barHeight);
-            ctx.fillStyle = 'white';
-            ctx.fillText(`Depth: ${depth}%`, 5, height - (barHeight/2) + 5);
-        }
-
-        function startEdgingTimer() {
-            if (edgingTimerInterval) clearInterval(edgingTimerInterval);
-            edgingTimer.style.display = 'block';
-            let seconds = 0;
-            edgingTimerInterval = setInterval(() => {
-                seconds++;
-                const min = Math.floor(seconds / 60).toString().padStart(2, '0');
-                const sec = (seconds % 60).toString().padStart(2, '0');
-                edgingTimer.textContent = `${min}:${sec}`;
-            }, 1000);
-        }
-
-        function stopEdgingTimer() {
-            clearInterval(edgingTimerInterval);
-            edgingTimerInterval = null;
-            edgingTimer.style.display = 'none';
-        }
-
-        function renderSetup(isReturningUser = false, data = {}) {
-            setupOverlay.style.display = 'flex';
-            let step = isReturningUser ? 2 : 1;
-            
-            function displayStep() {
-                if (step === 1) {
-                    setupBox.innerHTML = `<h2>Step 1: Handy Key</h2><p>Please enter your connection key from handyfeeling.com</p><input type="password" id="setup-key" class="input-text" placeholder="Handy Key"><br><button id="setup-next" class="my-button">Next</button>`;
-                    D.getElementById('setup-next').onclick = async () => {
-                        const key = D.getElementById('setup-key').value.trim();
-                        if (!key) return;
-                        myHandyKey = key;
-                        await apiCall('/set_handy_key', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: myHandyKey }) });
-                        step = 2; displayStep();
-                    };
-                } else if (step === 2) {
-                    setupBox.innerHTML = `<h2>Step 2: Persona</h2><p>Describe your AI partner for this session.</p><input type="text" id="setup-persona" class="input-text" value="${data.persona || 'An energetic and passionate girlfriend'}" placeholder="Describe persona"><br><button id="setup-next" class="my-button">Next</button>`;
-                    D.getElementById('setup-next').onclick = () => {
-                        personaInput.value = D.getElementById('setup-persona').value.trim();
-                        if (isReturningUser) { setupOverlay.style.display = 'none'; sendUserMessage(''); }
-                        else { step = 3; displayStep(); }
-                    };
-                } else if (step === 3 || step === 4) {
-                    const title = step === 3 ? "Set the Tip" : "Set the Base";
-                    const btnText = step === 3 ? "Set Tip" : "Next";
-                    setupBox.innerHTML = `<h2>Step ${step}: ${title}</h2><p>Move the Handy to the desired position and click '${btnText}'.</p><div><button id="d-down" class="my-button" style="width:auto;">&lt;&lt; Out</button><span id="d-val" style="padding:0 15px;">?</span>%<button id="d-up" class="my-button" style="width:auto;">In &gt;&gt;</button></div><button id="set-pos" class="my-button">${btnText}</button>`;
-                    let currentDepth = 50;
-                    const updateDepthDisplay = (val) => D.getElementById('d-val').textContent = val;
-                    const nudge = async (dir) => { const res = await apiCall('/nudge', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({direction:dir, key:myHandyKey})}); if (res) { currentDepth = res.depth_percent; updateDepthDisplay(currentDepth); } };
-                    D.getElementById('d-up').onclick = () => nudge('up');
-                    D.getElementById('d-down').onclick = () => nudge('down');
-                    D.getElementById('set-pos').onclick = async () => {
-                        if (step === 3) { D.minDepth = currentDepth; step = 4; displayStep(); }
-                        else { D.maxDepth = currentDepth; await apiCall('/set_depth_limits', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({min_depth:D.minDepth, max_depth:D.maxDepth})}); step = 5; displayStep(); }
-                    };
-                } else if (step === 5 || step === 6) {
-                    const title = step === 5 ? "Minimum Speed" : "Maximum Speed";
-                    const defaultVal = step === 5 ? 10 : 80;
-                    setupBox.innerHTML = `<h2>Step ${step}: Set ${title}</h2><p>Choose your preferred ${title.toLowerCase()}.</p><div class="slider-container"><input type="range" min="0" max="100" value="${defaultVal}" id="speed-slider"><span id="speed-val">${defaultVal}%</span></div><button id="set-speed" class="my-button">Next</button>`;
-                    const slider = D.getElementById('speed-slider');
-                    slider.oninput = () => D.getElementById('speed-val').textContent = `${slider.value}%`;
-                    D.getElementById('set-speed').onclick = async () => {
-                        if (step === 5) { D.minSpeed = slider.value; step = 6; displayStep(); }
-                        else { D.maxSpeed = slider.value; await apiCall('/set_speed_limits', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({min_speed:D.minSpeed, max_speed:D.maxSpeed})}); setupOverlay.style.display = 'none'; statusText.textContent = `Setup complete. Ready to chat.`; }
-                    };
-                }
+            if (parseInt(minDepth.value) > parseInt(maxDepth.value)) {
+                maxDepth.value = minDepth.value;
             }
-            displayStep();
+            depthVal.textContent = `${minDepth.value} - ${maxDepth.value}`;
         }
 
-        async function startupCheck() {
-            const data = await apiCall('/check_settings');
-            if (data && data.configured) {
-                statusText.textContent = 'Welcome back! Settings loaded.';
-                myHandyKey = data.handy_key;
-                personaInput.value = data.persona;
-                if(data.ai_name) {
-                    aiName = data.ai_name;
-                    aiNameInput.value = aiName;
-                    D.querySelector('#typing-indicator .speaker-name').textContent = aiName;
-                }
-                if (data.pfp) {
-                    pfpPreview.src = data.pfp;
-                    typingIndicatorPfp.src = data.pfp;
-                }
-                if(data.elevenlabs_key) {
-                    elevenLabsKeyInput.value = data.elevenlabs_key;
-                    setElevenLabsKeyButton.click();
-                }
-                if (localStorage.getItem('sidebar_collapsed') === 'true') {
-                    D.body.classList.add('sidebar-collapsed');
-                }
-                D.getElementById('splash-screen').style.display = 'none';
-                renderSetup(true, data);
-            } else {
-                const startHandler = (e) => { if(e.key === 'Enter'){ D.removeEventListener('keydown', startHandler); D.getElementById('splash-screen').classList.add('hidden'); setTimeout(() => renderSetup(false), 1000); }};
-                D.addEventListener('keydown', startHandler);
-            }
-        }
-        
-        // Event Listeners
-        D.getElementById('send-chat-btn').addEventListener('click', () => sendUserMessage(userChatInput.value));
-        userChatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendUserMessage(userChatInput.value); });
-        setPersonaBtn.addEventListener('click', () => { sendUserMessage(''); statusText.textContent = 'Persona updated!'; });
-        setAiNameBtn.addEventListener('click', async () => {
-            const newName = aiNameInput.value.trim();
-            if (!newName) return;
-            const data = await apiCall('/set_ai_name', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({name: newName}) });
-            if (data && data.status === 'special_persona_activated') {
-                easterEggOverlay.innerHTML = `// WARNING: Personality Core Override Detected...<br>// Subject: ${data.persona}<br><br>Good luck.`;
-                easterEggOverlay.style.display = 'flex';
-                setTimeout(() => { easterEggOverlay.style.opacity = '1'; }, 10);
-                setTimeout(() => {
-                    easterEggOverlay.style.opacity = '0';
-                    setTimeout(() => {
-                        easterEggOverlay.style.display = 'none';
-                        aiName = data.persona;
-                        aiNameInput.value = aiName;
-                        D.querySelectorAll('.bot-bubble .speaker-name').forEach(el => el.textContent = aiName);
-                        addChatMessage('BOT', data.message);
-                    }, 1000);
-                }, 3000);
-            } else if (data && data.status === 'success') {
-                aiName = data.name;
-                statusText.textContent = `AI name updated to ${aiName}!`;
-                D.querySelectorAll('.bot-bubble .speaker-name').forEach(el => el.textContent = aiName);
-            }
+        [minSpeed, maxSpeed, minDepth, maxDepth].forEach(el => {
+            el.addEventListener('input', updateSliderLabels);
         });
-        toggleSidebarBtn.addEventListener('click', () => {
-            const isCollapsed = D.body.classList.toggle('sidebar-collapsed');
-            localStorage.setItem('sidebar_collapsed', isCollapsed);
-            setTimeout(resizeCanvas, 350);
-        });
-        pfpUploadInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64String = reader.result;
-                pfpPreview.src = base64String;
-                typingIndicatorPfp.src = base64String;
-                apiCall('/set_profile_picture', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pfp_b64: base64String }) });
+
+        saveBtn.addEventListener('click', async () => {
+            const key = D.getElementById('onboarding-key').value.trim();
+            const persona = D.getElementById('onboarding-persona').value.trim();
+            if (!key) {
+                alert('Handy Connection Key is required.');
+                return;
+            }
+
+            const settings = {
+                handy_key: key,
+                persona_desc: persona,
+                min_speed: minSpeed.value,
+                max_speed: maxSpeed.value,
+                min_depth: minDepth.value,
+                max_depth: maxDepth.value,
             };
-            reader.readAsDataURL(file);
-        });
-        setElevenLabsKeyButton.addEventListener('click', async () => {
-            const apiKey = elevenLabsKeyInput.value.trim();
-            if(!apiKey) return;
-            const data = await apiCall('/setup_elevenlabs', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({api_key:apiKey})});
-            if (data && data.status === 'success') {
-                const selectBox = D.getElementById('elevenlabs-voice-select-box');
-                selectBox.innerHTML = '<option value="">-- Pick a Voice --</option>';
-                for (const [name, id] of Object.entries(data.voices)) { selectBox.innerHTML += `<option value="${id}">${name}</option>`; }
-                selectBox.disabled = false;
-            }
-        });
-        D.getElementById('like-this-move-btn').addEventListener('click', async () => {
-            const data = await apiCall('/like_last_move', { method: 'POST' });
-            if (data && data.status === 'boosted') {
-                statusText.textContent = `Saved '${data.name}' to my memory!`;
-            } else { statusText.textContent = "Status: No active move to like."; }
-        });
-        const stopButtons = [D.getElementById('stop-auto-btn'), D.getElementById('emergency-stop-all-btn')];
-        stopButtons.forEach(btn => btn.addEventListener('click', () => {
-            imCloseBtn.style.display = 'none';
-            stopEdgingTimer();
-            if(btn.id === 'emergency-stop-all-btn') sendUserMessage('stop');
-            else apiCall('/stop_auto_mode', {method:'POST'});
-        }));
-        edgingModeBtn.addEventListener('click', () => {
-            apiCall('/start_edging_mode', {method:'POST'});
-            imCloseBtn.style.display = 'block';
-            startEdgingTimer();
-        });
-        imCloseBtn.addEventListener('click', () => {
-            apiCall('/signal_edge', { method: 'POST' });
-            imCloseBtn.style.transform = 'scale(0.95)';
-            setTimeout(() => { imCloseBtn.style.transform = ''; }, 100);
-        });
-        D.getElementById('elevenlabs-voice-select-box').addEventListener('change', (e) => apiCall('/set_elevenlabs_voice', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({voice_id: e.target.value, enabled:D.getElementById('enable-audio-checkbox').checked})}));
-        D.getElementById('enable-audio-checkbox').addEventListener('change', (e) => apiCall('/set_elevenlabs_voice', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({voice_id: D.getElementById('elevenlabs-voice-select-box').value, enabled: e.target.checked})}));
-        D.getElementById('start-auto-btn').addEventListener('click', () => sendUserMessage('take over'));
-        D.getElementById('milking-mode-btn').addEventListener('click', () => apiCall('/start_milking_mode', {method:'POST'}));
 
-        // Polling Loops
-        setInterval(async () => {
-            const data = await apiCall('/get_updates');
-            if (!data) return;
-            if (data instanceof Blob || (data.messages && data.messages.length > 0)) {
-                typingIndicator.style.display = 'none';
-            }
-            if (data instanceof Blob) {
-                const audio = new Audio(URL.createObjectURL(data));
-                audio.play();
-            } else if (data.messages) {
-                data.messages.forEach(msg => addChatMessage('BOT', msg));
-            }
-        }, 1500);
-        setInterval(async () => {
-            const data = await apiCall('/get_status');
-            if (data) {
-                const emoji = {'Curious':'🤔','Teasing':'😉','Playful':'😜','Loving':'❤️','Excited':'✨','Passionate':'🔥','Seductive':'😈','Anticipatory':'👀','Breathless':'🥵','Dominant':'👑','Submissive':'🙇‍♀️','Vulnerable':'😳','Confident':'😏','Intimate':'🥰','Needy':'🥺','Overwhelmed':'🤯','Afterglow':'😌'}[data.mood] || '';
-                moodDisplay.textContent = `Mood: ${data.mood} ${emoji}`;
-                drawHandyVisualizer(data.speed || 0, data.depth || 0);
-            }
-        }, 500);
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
 
-        // Startup
-        window.addEventListener('resize', resizeCanvas);
-        D.addEventListener('DOMContentLoaded', () => {
-            resizeCanvas();
-            startupCheck();
+            const res = await apiCall('/save_onboarding_settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(settings)
+            });
+
+            if (res && res.status === 'ok') {
+                location.reload();
+            } else {
+                alert('Failed to save settings. Please check the server logs.');
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save & Start';
+            }
         });
-    </script>
+    }
+
+
+    // --- Standard Event Listeners ---
+    D.getElementById('edging-mode-btn').addEventListener('click', async ()=>{
+      const res = await apiCall('/start_edging_mode', { method:'POST' });
+      if (res && res.status === 'error') statusText.textContent = res.message;
+    });
+    D.getElementById('milking-mode-btn').addEventListener('click', async ()=>{
+      const res = await apiCall('/start_milking_mode', { method:'POST' });
+      if (res && res.status === 'error') statusText.textContent = res.message;
+    });
+    D.getElementById('start-auto-btn').addEventListener('click', async ()=>{
+      const res = await apiCall('/start_auto_mode', { method:'POST' });
+      if (res && res.status === 'error') statusText.textContent = res.message;
+    });
+
+    async function emergencyStop(){
+      await apiCall('/stop_everything', { method:'POST' });
+      if (imCloseBtn) imCloseBtn.style.display = 'none';
+      statusText.textContent = 'Stopped.';
+    }
+    D.getElementById('stop-auto-btn').addEventListener('click', emergencyStop);
+    D.getElementById('emergency-stop-all-btn').addEventListener('click', emergencyStop);
+
+    D.getElementById('send-chat-btn').addEventListener('click', ()=> sendUserMessage(userChatInput.value));
+    userChatInput.addEventListener('keypress', e=>{ if(e.key==='Enter') sendUserMessage(userChatInput.value); });
+    D.getElementById('set-persona-btn').addEventListener('click', ()=> {
+        myPersonaDescription = personaInput.value.trim();
+        statusText.textContent = 'Persona description updated.';
+        sendUserMessage('');
+    });
+    
+    D.getElementById('set-ai-name-btn').addEventListener('click', async () => {
+        const name = aiNameInput.value.trim();
+        if (!name) return;
+        await apiCall('/set_ai_name', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ name }) });
+        statusText.textContent = `AI name set to ${name}.`;
+    });
+    
+    D.getElementById('memories-toggle-btn').addEventListener('click', async () => {
+        const btn = D.getElementById('memories-toggle-btn');
+        const res = await apiCall('/toggle_memory', { method: 'POST' });
+        if (res && res.status === 'ok') {
+            const state = res.memories_on ? 'ON' : 'OFF';
+            btn.textContent = `Memories: ${state}`;
+            statusText.textContent = `Long-term memory is now ${state}.`;
+        }
+    });
+
+    D.querySelectorAll('input[name="reply-length"]').forEach(r=>{
+      r.addEventListener('change', async ()=>{
+        replyLength = D.querySelector('input[name="reply-length"]:checked').value;
+        statusText.textContent = `Reply length set to ${replyLength}.`;
+        await fetch('/set_reply_length', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ length: replyLength })});
+      });
+    });
+
+    pfpUploadInput.addEventListener('change', ()=>{
+      const file = pfpUploadInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onloadend = async ()=>{
+        const base64 = reader.result;
+        pfpPreview.src = base64; typingIndicatorPfp.src = base64;
+        const res = await apiCall('/set_profile_picture', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ pfp_b64: base64 })});
+        if (res && res.status === 'success' && res.pfp_url){
+          pfpPreview.src = res.pfp_url; typingIndicatorPfp.src = res.pfp_url;
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const timingIds = ['auto-min-time','auto-max-time','edging-min-time','edging-max-time','milking-min-time','milking-max-time'];
+    function readTimings(){
+      const g=id=>parseFloat(D.getElementById(id).value);
+      return { auto_min:g('auto-min-time'), auto_max:g('auto-max-time'),
+               edging_min:g('edging-min-time'), edging_max:g('edging-max-time'),
+               milking_min:g('milking-min-time'), milking_max:g('milking-max-time') };
+    }
+    timingIds.forEach(id=> D.getElementById(id).addEventListener('change', async ()=>{
+      const res = await apiCall('/set_timings', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(readTimings()) });
+      if (!res || res.status !== 'ok') statusText.textContent = 'Failed to save timings';
+      else statusText.textContent = 'Timings saved.';
+    }));
+
+    // Polling
+    setInterval(()=>{
+      fetch('/get_updates').then(async res=>{
+        const ct = res.headers.get('content-type');
+        if (ct && ct.includes('audio/')) return;
+        return res.json();
+      }).then(data=>{
+        if (!data) return;
+        if (data.messages && data.messages.length){
+          typingIndicator.style.display = 'none';
+          for (const m of data.messages){
+            const div = D.createElement('div');
+            div.className = 'chat-message-container bot-bubble';
+            div.innerHTML = `<img class="chat-pfp" src="${pfpPreview.src}"><div class="message-content"><div class="speaker-name">${(aiNameInput.value||'BOT')}</div><div class="message-bubble">${m}</div></div>`;
+            chatMessagesContainer.appendChild(div);
+          }
+          scrollToBottom();
+        }
+      });
+
+      fetch('/get_status').then(res=>res.json()).then(data=>{
+        if (!data) return;
+        const emoji = {'Curious':'🤔','Teasing':'😉','Playful':'😏','Dominant':'😈','Needy':'🥺','Overwhelmed':'🤯','Afterglow':'😌'}[data.mood] || '';
+        moodDisplay.textContent = `Mood: ${data.mood} ${emoji}`;
+        drawHandyVisualizer(data.speed || 0, data.depth || 0);
+        updateModeButtons(data.active_mode);
+      });
+    }, 500);
+
+    // Startup
+    window.addEventListener('resize', ()=>{ resizeCanvas(); scrollToBottom(); });
+    document.addEventListener('DOMContentLoaded', ()=>{ 
+        resizeCanvas(); 
+        startupCheck(); 
+        setupOnboarding();
+    });
+  </script>
 </body>
 </html>

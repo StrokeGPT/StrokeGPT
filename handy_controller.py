@@ -1,8 +1,12 @@
 import sys
 import requests
+import time
+from script_engine import ScriptEngine, Intent
+from script_player import ScriptPlayer
+from llm_service import LLMService
 
 class HandyController:
-    def __init__(self, handy_key="", base_url="https://www.handyfeeling.com/api/handy/v2/"):
+    def __init__(self, handy_key="", llm_service: LLMService = None, base_url="https://www.handyfeeling.com/api/handy/v2/"):
         self.handy_key = handy_key
         self.base_url = base_url
         self.last_stroke_speed = 0
@@ -13,6 +17,17 @@ class HandyController:
         self.max_handy_depth = 100
         self.min_handy_depth = 0
         self.FULL_TRAVEL_MM = 110.0
+        self.current_max_velocity_mm_s = 400.0
+        
+        self.script_engine = ScriptEngine(llm=llm_service) if llm_service else None
+        
+        self.script_player = ScriptPlayer(self)
+        self.script_player.start()
+        self._mode_context = None
+
+    def _speed_pct_to_max_vel_mm_s(self, pct):
+        MAX_PHYSICAL_VELOCITY = 400.0
+        return max(5.0, (pct / 100.0) * MAX_PHYSICAL_VELOCITY)
 
     def set_api_key(self, key):
         self.handy_key = key
@@ -39,70 +54,76 @@ class HandyController:
             return 0.0
         return max(0.0, min(100.0, p))
 
-    def move(self, speed, depth, stroke_range):
-        """
-        A simpler move function that expects complete instructions from the AI.
-        It scales the provided values to the user's calibrated limits.
-        """
-        if not self.handy_key:
+    def move(self, speed, depth, stroke_range, context):
+        """Generative AI move function. Takes an intent and creates a script from scratch."""
+        if not self.handy_key or not self.script_engine:
             return
 
-        # A speed of 0 is a special command to stop all movement.
         if speed is not None and speed == 0:
-            self._send_command("hamp/stop")
-            self.last_stroke_speed = 0
-            self.last_relative_speed = 0
+            self.stop()
             return
 
-        # Handle cases where the AI might still send null values
-        if speed is None or depth is None or stroke_range is None:
-            print("⚠️ Incomplete move received from AI, ignoring.")
-            return
-
-        self._send_command("mode", {"mode": 0})
-        self._send_command("hamp/start")
-
-        # Set slide range based on depth and stroke_range
-        relative_pos_pct = self._safe_percent(depth)
-        absolute_center_pct = self.min_handy_depth + (self.max_handy_depth - self.min_handy_depth) * (relative_pos_pct / 100.0)
-        calibrated_range_width = self.max_handy_depth - self.min_handy_depth
-        
-        relative_range_pct = self._safe_percent(stroke_range)
-        span_abs = (calibrated_range_width * (relative_range_pct / 100.0)) / 2.0
-        
-        min_zone_abs = absolute_center_pct - span_abs
-        max_zone_abs = absolute_center_pct + span_abs
-        
-        clamped_min_zone = max(self.min_handy_depth, min_zone_abs)
-        clamped_max_zone = min(self.max_handy_depth, max_zone_abs)
-        
-        slide_min = round(100 - clamped_max_zone)
-        slide_max = round(100 - clamped_min_zone)
-
-        if slide_min >= slide_max:
-            slide_max = slide_min + 2
-        
-        slide_max = min(100, slide_max)
-        slide_min = max(0, slide_min)
-
-        self._send_command("slide", {"min": slide_min, "max": slide_max})
-        
-        # Calculate and set the final velocity
-        relative_speed_pct = self._safe_percent(speed)
+        relative_speed_pct = self._safe_percent(speed if speed is not None else 50)
         speed_range_width = self.max_user_speed - self.min_user_speed
-        final_physical_speed = self.min_user_speed + (speed_range_width * (relative_speed_pct / 100.0))
-        final_physical_speed = int(round(final_physical_speed))
-        
-        self._send_command("hamp/velocity", {"velocity": final_physical_speed})
+        final_absolute_speed_pct = self.min_user_speed + (speed_range_width * (relative_speed_pct / 100.0))
+        self.current_max_velocity_mm_s = self._speed_pct_to_max_vel_mm_s(final_absolute_speed_pct)
 
-        # Update state variables for the next command
-        self.last_stroke_speed = final_physical_speed
-        self.last_relative_speed = relative_speed_pct
-        self.last_depth_pos = int(round(relative_pos_pct))
+        tags = set()
+        if (zone := context.get("zone_lock")):
+            tags.add(zone)
+        
+        intent = Intent(
+            speed_pct=relative_speed_pct,
+            depth_center_pct=float(depth),
+            range_pct=float(stroke_range),
+            tags=tags
+        )
+
+        generated_script = self.script_engine.generate_script(
+            intent, context, float(self.min_handy_depth), float(self.max_handy_depth)
+        )
+
+        if generated_script:
+            for action in generated_script["actions"]:
+                action["pos_pct"] = action.pop("pos")
+            self.script_player.set_script(generated_script)
+            self.last_relative_speed = intent.speed_pct
+            self.last_depth_pos = intent.depth_center_pct
+
+    def play_pattern(self, steps: list):
+        """Plays a pre-made pattern from the script library."""
+        if not self.handy_key or not steps:
+            return
+        
+        # Convert steps from scale_to_user into a script for the player
+        script_actions = []
+        current_time = 0
+        for step in steps:
+            # The player needs absolute time, so we accumulate the sleep durations
+            script_actions.append({"at": current_time, "pos_pct": step["dp"]})
+            current_time += int(step["sleep"] * 1000)
+
+        if not script_actions:
+            return
+            
+        final_script = {
+            'name': 'pattern_playback',
+            'actions': script_actions,
+            'duration_ms': current_time
+        }
+        self.script_player.set_script(final_script)
+        
+        # We don't have fine-grained speed control here, so we set an average
+        self.last_relative_speed = 50
 
     def stop(self):
-        """Stops all movement."""
-        self.move(speed=0, depth=None, stroke_range=None)
+        self.script_player.set_script(None)
+        try:
+            self._send_command("hamp/stop")
+        except Exception:
+            pass
+        self.last_stroke_speed = 0
+        self.last_relative_speed = 0
 
     def nudge(self, direction, min_depth_pct, max_depth_pct, current_pos_mm):
         JOG_STEP_MM = 2.0
@@ -136,3 +157,6 @@ class HandyController:
 
     def mm_to_percent(self, val):
         return int(round((float(val) / self.FULL_TRAVEL_MM) * 100))
+
+    def set_mode_context(self, mode_name=None):
+        self._mode_context = mode_name

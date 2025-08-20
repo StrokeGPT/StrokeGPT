@@ -2,6 +2,18 @@
     CHANGELOG
 ====================
 
+=== v2.0 - The Funscript Update ===
+
+- The model no longer uses basic up/down movements. It now invents mini funscripts on the fly, all of which are context specific.
+- You can now toggle the model's response length in the UI sidebar.
+- The default app you downloaded comes with a reduced library size. This is because the fucking dingbat who sent me some of the mini funscipts they "made" for the old library lied. 
+They did, in fact, steal them without credit. Did I mention they're a dingbat?
+- The AI now does a much better job at managing memories etc in your my_settings file. It's no ChatGPT, though. More like Chatgpt's estranged cousin who took a few too many footbals to the head in college...
+The UI is all nice and shiny now!
+-Liking moves sadly no longer works due to how scripts are generated on the fly.
+- The funscript engine took so long to noodle over and implement that I'm mentioning it twice.
+- We've come far, and I appreciate your support, even if you have got your dick out right now :/
+
 === v1.5 - The Refactor & Interactivity Update ===
 
 - Major Architectural Overhaul: The entire application was refactored from a single mahoosive file into a multi-module structure. This makes it more stable and easier to update in the future. (I wept a little.)
